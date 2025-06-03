@@ -1,0 +1,59 @@
+let groceryItems = JSON.parse(localStorage.getItem('groceryItems')) || [];
+
+// Initialize app
+window.onload = function() {
+  renderItems();
+};
+
+// Add Item
+function addItem() {
+  const itemName = document.getElementById('item-name').value.trim();
+  if (itemName === '') {
+    alert("Please enter an item name.");
+    return;
+  }
+
+  groceryItems.push(itemName);
+  localStorage.setItem('groceryItems', JSON.stringify(groceryItems));
+  document.getElementById('item-name').value = '';
+  renderItems();
+}
+
+// Render List
+function renderItems() {
+  const list = document.getElementById('grocery-list');
+  list.innerHTML = '';
+
+  groceryItems.forEach((item, index) => {
+    const li = document.createElement('li');
+    li.innerHTML = `
+      ${item}
+      <div class="grocery-actions">
+        <button class="edit-btn" onclick="editItem(${index})">Edit</button>
+        <button class="delete-btn" onclick="deleteItem(${index})">Delete</button>
+      </div>
+    `;
+    list.appendChild(li);
+  });
+
+  document.getElementById('total-items').innerText = groceryItems.length;
+}
+
+// Edit Item
+function editItem(index) {
+  const newName = prompt("Edit item name:", groceryItems[index]);
+  if (newName && newName.trim() !== '') {
+    groceryItems[index] = newName.trim();
+    localStorage.setItem('groceryItems', JSON.stringify(groceryItems));
+    renderItems();
+  }
+}
+
+// Delete Item
+function deleteItem(index) {
+  if (confirm("Are you sure you want to delete this item?")) {
+    groceryItems.splice(index, 1);
+    localStorage.setItem('groceryItems', JSON.stringify(groceryItems));
+    renderItems();
+  }
+}
